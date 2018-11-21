@@ -1,0 +1,10 @@
+
+{"deviceNum":"xx22","login":"true"}
+
+
+{"deviceNum":"yy11","login":"true"}
+
+
+{"deviceNum":"xx22","sendData":"true","data":{"key1":"123","key2":"abc","key3":"abc123"}}
+
+{"deviceNum":"yy11","sendData":"true","data":{"key1":"456","key2":"efg","key3":"456efg"}}

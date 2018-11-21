@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>测试</title>
+    <style type="text/css">
+      body{
+        padding-left: 20px;
+      }
+      .tcpClient {
+        width: 120px;
+        height: 120px;
+        background-color: #ddd;
+        float: left;
+        margin-right: 10px;
+      }
+      .deviceTitle {
+        font-weight: bolder;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>远程监控</h1>
+    <div id="title"></div>
+  </body>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    
+    //websocket客户端
+    var wsClient = new WebSocket('ws://120.194.36.133:9560');
+    wsClient.onmessage = function (message) {
+      var data = analysis(message);
+      if (data.online || data.newConnect) {
+        create(data.deviceNum);
+      }else if (data.disconnect) {
+        remove(data.deviceNum);
+      }else if (data.newData) {
+        updata(data.deviceNum,data.data);
+      }
+    };
+
+    var analysis = function(message){
+      let data;
+      try{
+        data = JSON.parse(message.data);
+      }catch(e){
+        console.log(e);
+      }
+      console.log(data);
+      return data;
+    }
+    var create = function(deviceNum){
+      $('#title').append("<div id="+deviceNum+" class='tcpClient'><div class='deviceTitle'>"+deviceNum+"</div>"+
+          "<div><span>key1: </span><span class='key1'></span></div>"+
+          "<div><span>key2: </span><span class='key2'></span></div>"+
+          "<div><span>key3: </span><span class='key3'></span></div>"+
+          "<button id="+deviceNum+">发送</button>"+
+        "</div>");
+      $('#'+deviceNum).on('click',function(){
+        wsClient.send(deviceNum);
+      })
+    }
+    var remove = function(deviceNum){
+      $('#'+deviceNum).remove();
+    }
+    var updata = function(deviceNum,data){
+      for(let i in data){
+        $('#'+deviceNum+" ."+i).text(data[i]);
+      } 
+    }
+
+  </script>
+</html>
+
+
+<!-- wsClient.onerror = function (e) {
+
+};
+wsClient.onopen = function (e) {
+  //(typeof e == 'string') && wsClient.send(e);//向后端发送数据
+};
+wsClient.onclose = function (e) {
+
+}; -->
